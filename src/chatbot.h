@@ -36,9 +36,6 @@ public:
     ChatBot &operator=(const ChatBot &source); // copy assignment operator
     ChatBot &operator=(ChatBot &&source); // move assignment operator
 
-    bool operator==(const ChatBot& rhs) const;
-    bool operator!=(const ChatBot& rhs) const {return !(*this==rhs);}
-
     ////
     //// EOF STUDENT CODE
 
