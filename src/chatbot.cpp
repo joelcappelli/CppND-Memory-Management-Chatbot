@@ -46,6 +46,7 @@ ChatBot::~ChatBot()
 ////
 ChatBot::ChatBot(const ChatBot& source){
     std::cout << "ChatBot Copy Constructor" << std::endl;
+    //allocate new heap memory for this instance based on the source image
     _image = new wxBitmap(*source._image);
     _chatLogic = source._chatLogic;
     _rootNode = source._rootNode;    
@@ -54,13 +55,13 @@ ChatBot::ChatBot(const ChatBot& source){
 
 ChatBot::ChatBot(ChatBot&& source){
     std::cout << "ChatBot Move Constructor" << std::endl;
+    //steal the content from source
     _image = source._image;
     _chatLogic = source._chatLogic;
     _rootNode = source._rootNode;  
     _currentNode = source._currentNode;  
 
-    _chatLogic->SetChatbotHandle(this);
-
+    //set the source to a valid state
     source._chatLogic = nullptr;
     source._rootNode = nullptr; 
     source._currentNode = nullptr;
@@ -77,6 +78,7 @@ ChatBot &ChatBot::operator=(const ChatBot& source){
             _image = NULL;
         } 
 
+        //create new heap memory for this instance and copy data across
         _image = new wxBitmap(*source._image);
         _chatLogic = source._chatLogic;
         _rootNode = source._rootNode;   
@@ -89,19 +91,20 @@ ChatBot &ChatBot::operator=(const ChatBot& source){
 ChatBot &ChatBot::operator=(ChatBot&& source){
     std::cout << "ChatBot Move Assignment Operator" << std::endl;
     if(this != &source){
-        // deallocate heap memory
+        // deallocate heap memory that already exists for this instance
         if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
         {
             delete _image;
             _image = NULL;
         } 
 
+        //steal content from source
         _image = source._image;
         _chatLogic = source._chatLogic;
         _rootNode = source._rootNode;  
         _currentNode = source._currentNode;  
-        _chatLogic->SetChatbotHandle(this);
 
+        //set source to valid state
         source._image = NULL;
         source._chatLogic = nullptr;
         source._rootNode = nullptr;  
@@ -159,7 +162,7 @@ void ChatBot::SetCurrentNode(GraphNode *node)
     std::uniform_int_distribution<int> dis(0, answers.size() - 1);
     std::string answer = answers.at(dis(generator));
 
-    //set chatBot handle
+    //set chatBot handle for chat logic to pass image and message to user
     _chatLogic->SetChatbotHandle(this);
     // send selected node answer to user
     _chatLogic->SendMessageToUser(answer);
